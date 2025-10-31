@@ -17,6 +17,7 @@ export class MessagesComponent implements OnInit {
   body = '';
   messages: Message[] = [];
   showErrorDialog = false;
+  sessionId = this.generateSessionId();
 
   constructor(private messageService: MessageService) {}
 
@@ -27,7 +28,7 @@ export class MessagesComponent implements OnInit {
   sendMessage() {
     if (!this.to || !this.body) return;
 
-    this.messageService.sendMessage("+1" + this.to, this.body).subscribe({
+    this.messageService.sendMessage("+1" + this.to, this.body, this.sessionId).subscribe({
       next: (msg) => {
         this.messages.unshift(msg);
         this.clearForm();
@@ -43,7 +44,7 @@ export class MessagesComponent implements OnInit {
   }
 
   loadMessages() {
-    this.messageService.getMessages().subscribe((msgs) => {
+    this.messageService.getMessages(this.sessionId).subscribe((msgs) => {
       this.messages = msgs;
     });
   }
@@ -58,4 +59,7 @@ export class MessagesComponent implements OnInit {
     this.showErrorDialog = false;
   }
 
+  private generateSessionId(): string {
+    return 'session_' + Math.random().toString(36).substring(2, 12);
+  }
 }

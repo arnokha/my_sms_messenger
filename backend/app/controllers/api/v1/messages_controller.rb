@@ -22,7 +22,7 @@ module Api
                     from: twilio_message.from,
                     body: message_params[:body],
                     status: twilio_message.status,
-                    # session_id: message_params[:session_id]
+                    session_id: message_params[:session_id]
                 )
 
                 render json: message, status: :created
@@ -34,15 +34,16 @@ module Api
 
             # GET /api/v1/messages
             def index
-                messages = Message.order_by(created_at: :desc)
+                messages = Message.where(session_id: params[:session_id]).order_by(created_at: :desc)
+                # messages = Message.order_by(created_at: :desc)
                 render json: messages
             end
 
             private
 
-            # only allow to and body
+            # only allow to, body, session_id
             def message_params
-                params.require(:message).permit(:to, :body)
+                params.require(:message).permit(:to, :body, :session_id)
             end
         end
     end

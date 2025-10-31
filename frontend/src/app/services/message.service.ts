@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Message } from '../models/message.model';
 
@@ -11,11 +11,13 @@ export class MessageService {
 
   constructor(private http: HttpClient) {}
 
-  sendMessage(to: string, body: string): Observable<Message> {
-    return this.http.post<Message>(this.apiUrl, { message: { to, body } });
+  sendMessage(to: string, body: string, session_id: string): Observable<Message> {
+    
+    return this.http.post<Message>(this.apiUrl, { message: { to, body, session_id } });
   }
 
-  getMessages(): Observable<Message[]> {
-    return this.http.get<Message[]>(this.apiUrl);
+  getMessages(sessionId: string): Observable<Message[]> {
+    const params = new HttpParams().set('session_id', sessionId);
+    return this.http.get<Message[]>(this.apiUrl, { params });    
   }
 }
