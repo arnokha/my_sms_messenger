@@ -8,5 +8,5 @@ class Message
   field :status, type: String
   field :session_id, type: String
 
-  validates :to, :body, :session_id, presence: true
+  validates :to, :body, presence: true
 end

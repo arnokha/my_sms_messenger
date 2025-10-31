@@ -20,14 +20,15 @@ module Api
                 message = Message.create!(
                     to: twilio_message.to,
                     from: twilio_message.from,
-                    body: twilio_message.body,
+                    body: message_params[:body],
                     status: twilio_message.status,
-                    session_id: message_params[:session_id]
+                    # session_id: message_params[:session_id]
                 )
 
                 render json: message, status: :created
                 rescue => e
-                render json: { error: e.message }, status: :unprocessable_entity
+                    Rails.logger.error("error: #{e.class} - #{e.message}")
+                    render json: { error: e.message }, status: :unprocessable_content
                 end
             end
 
@@ -41,7 +42,7 @@ module Api
 
             # only allow to and body
             def message_params
-                params.require(:message).permit(:to, :body, :session_id)
+                params.require(:message).permit(:to, :body)
             end
         end
     end

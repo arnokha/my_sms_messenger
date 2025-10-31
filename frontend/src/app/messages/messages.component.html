@@ -1,0 +1,71 @@
+<div class="page">
+  <h1 class="title">MY SMS MESSENGER</h1>
+
+  <div class="panes">
+    <!-- New Message -->
+    <div class="pane">
+      <h2>New Message</h2>
+
+      <form (ngSubmit)="sendMessage()">
+        <label>
+          Phone Number
+            <div class="phone-input">
+                <span class="prefix">+1</span>
+                <input
+                    type="text"
+                    [(ngModel)]="to"
+                    name="to"
+                    placeholder="5551234567"
+                    inputmode="numeric"
+                    maxlength="10"
+                    required
+                    (input)="onPhoneInput($event)"
+                />
+            </div>
+            <div class="char-count">{{ to?.length || 0 }}/10</div>
+            <div *ngIf="to && to.length !== 10" class="error">
+                Must be exactly 10 digits.
+            </div>
+        </label>
+
+        <label>
+          Message
+          <textarea
+            [(ngModel)]="body"
+            name="body"
+            maxlength="250"
+            placeholder="Type your message..."
+            required
+          ></textarea>
+          <div class="char-count">{{ body.length }}/250</div>
+        </label>
+
+        <div class="actions">
+          <button type="button" (click)="clearForm()" class="clear">Clear</button>
+          <button type="submit" class="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Message History -->
+    <div class="pane">
+      <h2>Message History ({{ messages.length }})</h2>
+
+      <div class="history">
+        <div *ngFor="let msg of messages" class="message-box">
+          <div class="meta">
+            <span class="to">{{ msg.to | phoneFormat }}</span>
+            <span class="date">{{
+              msg.created_at | date: 'EEEE, dd-MMM-yy HH:mm:ss'
+            }} UTC</span>
+          </div>
+          <p>{{ msg.body }}</p>
+          <div class="char-count small">{{ msg.body.length }}/250</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="phone-hint">
+    <small>test number: 8777804236</small>
+  </div>
+</div>
