@@ -13,9 +13,10 @@ import { PhoneFormatPipe } from '../pipes/phone-format.pipe';
   styleUrls: ['./messages.component.scss']
 })
 export class MessagesComponent implements OnInit {
-  to = '';
+  to = '8777804236';
   body = '';
   messages: Message[] = [];
+  showErrorDialog = false;
 
   constructor(private messageService: MessageService) {}
 
@@ -26,9 +27,14 @@ export class MessagesComponent implements OnInit {
   sendMessage() {
     if (!this.to || !this.body) return;
 
-    this.messageService.sendMessage("+1" + this.to, this.body).subscribe((msg) => {
-      this.messages.unshift(msg);
-      this.clearForm();
+    this.messageService.sendMessage("+1" + this.to, this.body).subscribe({
+      next: (msg) => {
+        this.messages.unshift(msg);
+        this.clearForm();
+      },
+      error: (error) => {
+        this.showErrorDialog = true;
+      }
     });
   }
 
@@ -46,6 +52,10 @@ export class MessagesComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     input.value = input.value.replace(/\D/g, ''); // digits only
     this.to = input.value;
+  }
+
+  closeErrorDialog() {
+    this.showErrorDialog = false;
   }
 
 }

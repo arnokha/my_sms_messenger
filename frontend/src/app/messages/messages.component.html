@@ -65,7 +65,13 @@
       </div>
     </div>
   </div>
-  <div class="phone-hint">
-    <small>test number: 8777804236</small>
+
+  <!-- Error Dialog -->
+  <div *ngIf="showErrorDialog" class="dialog-overlay" (click)="closeErrorDialog()">
+    <div class="dialog" (click)="$event.stopPropagation()">
+      <h3>Error</h3>
+      <p>Error sending message. The phone number may be unreachable. Try: 8777804236</p>
+      <button (click)="closeErrorDialog()" class="dialog-close">OK</button>
+    </div>
   </div>
 </div>
