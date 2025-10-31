@@ -2,3 +2,12 @@ development:
   clients:
     default:
       uri: <%= ENV['MONGODB_URI'] %>
+
+production:
+  clients:
+    default:
+      uri: <%= ENV['MONGODB_URI'] %>
+      options:
+        server_selection_timeout: 5
+        connect_timeout: 5
+        socket_timeout: 5
