@@ -2,7 +2,7 @@ module Api
   module V1
     module Webhooks
       class TwilioController < ApplicationController
-        skip_before_action :verify_authenticity_token
+        skip_before_action :verify_authenticity_token, raise: false
         before_action :verify_twilio_signature
 
         def status
