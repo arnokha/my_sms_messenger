@@ -11,13 +11,18 @@ module Api
                 )
 
                 begin
+                # Construct the StatusCallback URL for Twilio webhooks
+                status_callback_url = "#{ENV['API_BASE_URL']}/api/v1/webhooks/twilio/status"
+
                 twilio_message = client.messages.create(
                     from: ENV['TWILIO_PHONE_NUMBER'],
                     to: message_params[:to],
-                    body: message_params[:body]
+                    body: message_params[:body],
+                    status_callback: status_callback_url
                 )
 
                 message = Message.create!(
+                    sid: twilio_message.sid,
                     to: twilio_message.to,
                     from: twilio_message.from,
                     body: message_params[:body],
