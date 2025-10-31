@@ -35,7 +35,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   startPolling() {
-    // Poll every 3 seconds for status updates
     this.pollingSubscription = interval(this.pollingInterval)
       .pipe(
         switchMap(() => this.messageService.getMessages(this.sessionId))

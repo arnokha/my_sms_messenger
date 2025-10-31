@@ -11,7 +11,6 @@ module Api
 
           Rails.logger.info("Twilio webhook received - SID: #{message_sid}, Status: #{message_status}")
 
-          # Find the message by Twilio's SID
           message = Message.find_by(sid: message_sid)
 
           if message
@@ -33,13 +32,8 @@ module Api
         def verify_twilio_signature
           validator = Twilio::Security::RequestValidator.new(ENV['TWILIO_AUTH_TOKEN'])
 
-          # Get the full URL that Twilio sent the request to
           url = request.original_url
-
-          # Get the X-Twilio-Signature header
           signature = request.headers['X-Twilio-Signature']
-
-          # Get the POST parameters
           post_params = request.request_parameters
 
           unless validator.validate(url, post_params, signature)

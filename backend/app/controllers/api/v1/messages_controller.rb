@@ -11,7 +11,6 @@ module Api
                 )
 
                 begin
-                # Construct the StatusCallback URL for Twilio webhooks
                 status_callback_url = "#{ENV['API_BASE_URL']}/api/v1/webhooks/twilio/status"
 
                 twilio_message = client.messages.create(
@@ -40,13 +39,11 @@ module Api
             # GET /api/v1/messages
             def index
                 messages = Message.where(session_id: params[:session_id]).order_by(created_at: :desc)
-                # messages = Message.order_by(created_at: :desc)
                 render json: messages
             end
 
             private
 
-            # only allow to, body, session_id
             def message_params
                 params.require(:message).permit(:to, :body, :session_id)
             end
