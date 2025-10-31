@@ -21,7 +21,8 @@ module Api
                     to: twilio_message.to,
                     from: twilio_message.from,
                     body: twilio_message.body,
-                    status: twilio_message.status
+                    status: twilio_message.status,
+                    session_id: message_params[:session_id]
                 )
 
                 render json: message, status: :created
@@ -40,7 +41,7 @@ module Api
 
             # only allow to and body
             def message_params
-                params.require(:message).permit(:to, :body)
+                params.require(:message).permit(:to, :body, :session_id)
             end
         end
     end
