@@ -26,7 +26,7 @@
         max-width: 500px;
         display: flex;
         flex-direction: column;
-        height: 60vh;
+        height: 68vh;
 
         h2 {
             font-size: 1.25rem;
@@ -153,6 +153,32 @@
                 padding: 8px;
                 line-height: 1.4;
                 overflow-wrap: break-word;
+            }
+
+            .footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .status {
+                font-size: 0.75rem;
+                font-weight: 500;
+                text-transform: lowercase;
+
+                &.status-queued {
+                    color: #888;
+                }
+
+                &.status-sent,
+                &.status-delivered {
+                    color: #88c597;
+                }
+
+                &.status-undelivered,
+                &.status-failed {
+                    color: #dc3545;
+                }
             }
 
             .char-count {

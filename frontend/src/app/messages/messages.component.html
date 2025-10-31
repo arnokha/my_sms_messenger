@@ -60,7 +60,16 @@
             }} UTC</span>
           </div>
           <p>{{ msg.body }}</p>
-          <div class="char-count small">{{ msg.body.length }}/250</div>
+          <div class="footer">
+            <span class="status" [ngClass]="{
+              'status-queued': msg.status === 'queued',
+              'status-sent': msg.status === 'sent',
+              'status-delivered': msg.status === 'delivered',
+              'status-undelivered': msg.status === 'undelivered',
+              'status-failed': msg.status === 'failed'
+            }">{{ msg.status || 'queued' }}</span>
+            <span class="char-count small">{{ msg.body.length }}/250</span>
+          </div>
         </div>
       </div>
     </div>
