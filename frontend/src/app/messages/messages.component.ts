@@ -34,8 +34,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const hasToken = this.userService.isAuthenticated();
-    console.log('Messages ngOnInit - hasToken:', hasToken);
-    console.log('Messages ngOnInit - currentUser:', this.userService.currentUser());
 
     // redirect to login if not authenticated
     if (!hasToken) {
@@ -45,10 +43,8 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     // load user data if not already loaded
     if (!this.userService.currentUser()) {
-      console.log('Loading user data via getMe()...');
       this.userService.getMe().subscribe({
         next: (user) => {
-          console.log('getMe success in messages component:', user);
           this.username = user.username;
           this.loadMessages();
           this.startPolling();
@@ -59,9 +55,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
         }
       });
     } else {
-      console.log('User data already loaded');
       this.username = this.userService.getCurrentUsername();
-      console.log('Username set to:', this.username);
       this.loadMessages();
       this.startPolling();
     }
