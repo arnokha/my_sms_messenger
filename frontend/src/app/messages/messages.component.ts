@@ -21,7 +21,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
   body = '';
   messages: Message[] = [];
   showErrorDialog = false;
-  sessionId = this.generateSessionId(); // TODO rm
   pollingInterval = 5000;
   username: string | null = null;
   private pollingSubscription?: Subscription;
@@ -68,7 +67,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   startPolling() {
     this.pollingSubscription = interval(this.pollingInterval)
       .pipe(
-        switchMap(() => this.messageService.getMessages(this.sessionId))
+        switchMap(() => this.messageService.getMessages())
       )
       .subscribe((msgs) => {
         this.messages = msgs;
@@ -83,8 +82,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   sendMessage() {
     if (!this.to || !this.body) return;
-    // TODO user token
-    this.messageService.sendMessage("+1" + this.to, this.body, this.sessionId).subscribe({
+    this.messageService.sendMessage("+1" + this.to, this.body).subscribe({
       next: (msg) => {
         this.messages.unshift(msg);
         this.clearForm();
@@ -100,8 +98,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   loadMessages() {
-    // TODO user token
-    this.messageService.getMessages(this.sessionId).subscribe((msgs) => {
+    this.messageService.getMessages().subscribe((msgs) => {
       this.messages = msgs;
     });
   }
@@ -114,11 +111,6 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   closeErrorDialog() {
     this.showErrorDialog = false;
-  }
-
-  // TODO rm
-  private generateSessionId(): string {
-    return 'session_' + Math.random().toString(36).substring(2, 12);
   }
 
   logout() {
