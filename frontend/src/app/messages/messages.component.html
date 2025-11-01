@@ -22,7 +22,7 @@
                     (input)="onPhoneInput($event)"
                 />
             </div>
-            <div class="char-count">{{ to?.length || 0 }}/10</div>
+            <div class="char-count">{{ to.length || 0 }}/10</div>
             <div *ngIf="to && to.length !== 10" class="error">
                 Must be exactly 10 digits.
             </div>

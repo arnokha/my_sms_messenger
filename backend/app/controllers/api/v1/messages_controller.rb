@@ -6,8 +6,8 @@ module Api
             # POST /api/v1/messages
             def create
                 client = Twilio::REST::Client.new(
-                ENV['TWILIO_ACCOUNT_SID'],
-                ENV['TWILIO_AUTH_TOKEN']
+                    ENV['TWILIO_ACCOUNT_SID'],
+                    ENV['TWILIO_AUTH_TOKEN']
                 )
 
                 begin
