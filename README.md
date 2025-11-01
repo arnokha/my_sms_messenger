@@ -7,7 +7,7 @@ https://jovial-begonia-f13fe7.netlify.app/
 ## Notes:
 - Signup, login, and logout are supported. Auth tokens have a 24hr TTL.
 - The frontend polls for message status every five seconds.
-- The backend is deployed on a free tier in [Render](https://render.com/docs/free), which may produce considerable startup lag (up to ~1 minute) on the first message sent as the instance spins up. Subsequent messages should be processed relatively quickly. The instance spins down after 15 minutes of inactivity.
+- The backend is deployed on a free tier in [Render](https://render.com/docs/free), which may produce considerable startup lag (up to ~1 minute) on the first message sent as the instance spins up. Subsequent messages should be processed relatively quickly. The instance spins down after 15 minutes of inactivity. The free instance may occasionally fail due to out of memory error.
 - Twilio has a 50 daily message limit per day on the account I have, and it is exhausted as of Fri Oct 31st 10:20AM EST, so please wait until at least Sat Nov 1st 10:20AM EST to test the deployment.
 
 ## Test Users
