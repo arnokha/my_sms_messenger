@@ -1,5 +1,11 @@
 <div class="page">
-  <h1 class="title">MY SMS MESSENGER</h1>
+  <div class="header">
+    <h1 class="title">MY SMS MESSENGER</h1>
+    <div class="user-info">
+      <span class="username">Logged in as: {{ username }}</span>
+      <button (click)="logout()" class="logout-button">Logout</button>
+    </div>
+  </div>
 
   <div class="panes">
     <!-- New Message -->

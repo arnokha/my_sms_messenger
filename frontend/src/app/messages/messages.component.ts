@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MessageService } from '../services/message.service';
+import { UserService } from '../services/user.service';
 import { Message } from '../models/message.model';
 import { PhoneFormatPipe } from '../pipes/phone-format.pipe';
 import { interval, Subscription } from 'rxjs';
@@ -21,11 +23,24 @@ export class MessagesComponent implements OnInit, OnDestroy {
   showErrorDialog = false;
   sessionId = this.generateSessionId();
   pollingInterval = 5000;
+  username: string | null = null;
   private pollingSubscription?: Subscription;
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    this.username = this.userService.getCurrentUsername();
+
+    // Redirect to login if not authenticated
+    if (!this.userService.isAuthenticated()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.loadMessages();
     this.startPolling();
   }
@@ -86,5 +101,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   private generateSessionId(): string {
     return 'session_' + Math.random().toString(36).substring(2, 12);
+  }
+
+  logout() {
+    this.userService.logout();
+    this.router.navigate(['/login']);
   }
 }

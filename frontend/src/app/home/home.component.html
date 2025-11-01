@@ -1,1 +1,11 @@
-<p>home works!</p>
+<div class="home-container">
+  <div *ngIf="isAuthenticated" class="welcome-message">
+    <h2>Welcome back, {{ username }}!</h2>
+    <p>You are logged in. Redirecting to messages...</p>
+  </div>
+
+  <div *ngIf="!isAuthenticated" class="redirect-message">
+    <h2>Welcome to My SMS Messenger</h2>
+    <p>Redirecting to login...</p>
+  </div>
+</div>

@@ -1,1 +1,43 @@
-<p>login works!</p>
+<div class="login-container">
+  <div class="login-card">
+    <h2>Login to My SMS Messenger</h2>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="username"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          [disabled]="isLoading"
+        />
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="!loginForm.form.valid || isLoading"
+        class="login-button"
+      >
+        {{ isLoading ? 'Logging in...' : 'Login' }}
+      </button>
+    </form>
+
+    <div class="signup-link">
+      <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
+    </div>
+  </div>
+</div>
