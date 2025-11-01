@@ -22,6 +22,16 @@
       text-align: center;
     }
 
+    .error-message {
+      background: #fee;
+      color: #c00;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #fcc;
+    }
+
     form {
       display: flex;
       flex-direction: column;

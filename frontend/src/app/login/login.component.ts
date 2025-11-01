@@ -15,6 +15,7 @@ export class LoginComponent {
   username = '';
   password = '';
   isLoading = false;
+  errorMessage = '';
 
   constructor(
     private userService: UserService,
@@ -27,6 +28,7 @@ export class LoginComponent {
     }
 
     this.isLoading = true;
+    this.errorMessage = '';
 
     this.userService.login(this.username, this.password).subscribe({
       next: (user) => {
@@ -36,6 +38,7 @@ export class LoginComponent {
       error: (error) => {
         this.isLoading = false;
         console.error('Login failed:', error);
+        this.errorMessage = error.error?.message || 'Login failed. Please check your credentials.';
       }
     });
   }

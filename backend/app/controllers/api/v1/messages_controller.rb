@@ -1,6 +1,7 @@
 module Api
     module V1
         class MessagesController < ApplicationController
+            include Authenticatable
             require 'twilio-ruby'
 
             # POST /api/v1/messages
@@ -20,13 +21,12 @@ module Api
                     status_callback: status_callback_url
                 )
 
-                message = Message.create!(
+                message = current_user.messages.create!(
                     sid: twilio_message.sid,
                     to: twilio_message.to,
                     from: twilio_message.from,
                     body: message_params[:body],
-                    status: twilio_message.status,
-                    session_id: message_params[:session_id]
+                    status: twilio_message.status
                 )
 
                 render json: message, status: :created
@@ -38,14 +38,14 @@ module Api
 
             # GET /api/v1/messages
             def index
-                messages = Message.where(session_id: params[:session_id]).order_by(created_at: :desc)
+                messages = current_user.messages.order_by(created_at: :desc)
                 render json: messages
             end
 
             private
 
             def message_params
-                params.require(:message).permit(:to, :body, :session_id)
+                params.require(:message).permit(:to, :body)
             end
         end
     end

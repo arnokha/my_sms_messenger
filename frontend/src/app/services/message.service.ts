@@ -8,15 +8,17 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class MessageService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = environment.baseUrl + "api/v1/messages"; // GET, POST
 
   constructor(private http: HttpClient) {}
 
   sendMessage(to: string, body: string, session_id: string): Observable<Message> {
+    // TODO -- user token instead of session id
     return this.http.post<Message>(this.apiUrl, { message: { to, body, session_id } });
   }
 
   getMessages(sessionId: string): Observable<Message[]> {
+    // TODO -- user token instead of session id
     const params = new HttpParams().set('session_id', sessionId);
     return this.http.get<Message[]>(this.apiUrl, { params });    
   }

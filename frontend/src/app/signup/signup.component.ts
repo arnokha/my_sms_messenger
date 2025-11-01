@@ -16,6 +16,7 @@ export class SignupComponent {
   password = '';
   confirmPassword = '';
   isLoading = false;
+  errorMessage = '';
 
   constructor(
     private userService: UserService,
@@ -27,12 +28,18 @@ export class SignupComponent {
       return;
     }
 
+    if (this.password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters long';
+      return;
+    }
+
     if (this.password !== this.confirmPassword) {
-      alert('Passwords do not match');
+      this.errorMessage = 'Passwords do not match';
       return;
     }
 
     this.isLoading = true;
+    this.errorMessage = '';
 
     this.userService.signup(this.username, this.password).subscribe({
       next: (user) => {
@@ -42,6 +49,12 @@ export class SignupComponent {
       error: (error) => {
         this.isLoading = false;
         console.error('Signup failed:', error);
+        // Backend returns { errors: ["error1", "error2"] }
+        if (error.error?.errors && Array.isArray(error.error.errors)) {
+          this.errorMessage = error.error.errors.join(', ');
+        } else {
+          this.errorMessage = 'Signup failed. Please try again.';
+        }
       }
     });
   }

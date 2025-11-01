@@ -1,7 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { User } from '../models/user.model';
+import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
+import { User, UserResponse, AuthResponse } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,34 +11,58 @@ import { User } from '../models/user.model';
 export class UserService {
   private readonly AUTH_TOKEN_KEY = 'auth_token';
 
-  constructor() {}
+  // Single source of truth for current logged-in user
+  currentUser = signal<User | null>(null);
+
+  // Backend endpoints
+  private createUserUrl = environment.baseUrl + "api/v1/users";
+  private createSessionUrl = environment.baseUrl + "api/v1/sessions";
+  private deleteSessionUrl = environment.baseUrl + "api/v1/sessions/current";
+  private meUrl = environment.baseUrl + "api/v1/me";
+
+  constructor(private http: HttpClient) {}
 
   login(username: string, password: string): Observable<User> {
-    // Mock login - always succeeds and uses username as token
-    const user: User = {
-      username,
-      token: username
-    };
-
-    localStorage.setItem(this.AUTH_TOKEN_KEY, user.token);
-
-    return of(user).pipe(delay(500));
+    return this.http.post<AuthResponse>(this.createSessionUrl, { username, password }).pipe(
+      map(response => {
+        return {
+          id: response.user.id,
+          username: response.user.username,
+          token: response.token
+        };
+      }),
+      tap(user => {
+        localStorage.setItem(this.AUTH_TOKEN_KEY, user.token);
+        this.currentUser.set(user);
+      })
+    );
   }
 
   signup(username: string, password: string): Observable<User> {
-    // Mock signup - always succeeds and performs login action
-    const user: User = {
-      username,
-      token: username
-    };
-
-    localStorage.setItem(this.AUTH_TOKEN_KEY, user.token);
-
-    return of(user).pipe(delay(500));
+    return this.http.post<AuthResponse>(this.createUserUrl, {
+      user: { username, password }
+    }).pipe(
+      map(response => {
+        return {
+          id: response.user.id,
+          username: response.user.username,
+          token: response.token
+        };
+      }),
+      tap(user => {
+        localStorage.setItem(this.AUTH_TOKEN_KEY, user.token);
+        this.currentUser.set(user);
+      })
+    );
   }
 
-  logout(): void {
-    localStorage.removeItem(this.AUTH_TOKEN_KEY);
+  logout(): Observable<void> {
+    return this.http.delete<void>(this.deleteSessionUrl).pipe(
+      tap(() => {
+        localStorage.removeItem(this.AUTH_TOKEN_KEY);
+        this.currentUser.set(null);
+      })
+    );
   }
 
   getAuthToken(): string | null {
@@ -48,6 +74,22 @@ export class UserService {
   }
 
   getCurrentUsername(): string | null {
-    return this.getAuthToken(); // Token is the username in our mock system
+    return this.currentUser()?.username ?? null;
+  }
+
+  getMe(): Observable<User> {
+    return this.http.get<UserResponse>(this.meUrl).pipe(
+      map(response => {
+        const token = this.getAuthToken();
+        return {
+          id: response.user.id,
+          username: response.user.username,
+          token: token || ''
+        };
+      }),
+      tap(user => {
+        this.currentUser.set(user);
+      })
+    );
   }
 }

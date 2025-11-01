@@ -2,6 +2,10 @@
   <div class="login-card">
     <h2>Login to My SMS Messenger</h2>
 
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
     <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
       <div class="form-group">
         <label for="username">Username</label>

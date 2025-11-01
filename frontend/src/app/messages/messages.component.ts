@@ -17,32 +17,54 @@ import { switchMap } from 'rxjs/operators';
   styleUrls: ['./messages.component.scss']
 })
 export class MessagesComponent implements OnInit, OnDestroy {
-  to = '8777804236';
+  to = '8777804236'; // default to a virtual twilio number
   body = '';
   messages: Message[] = [];
   showErrorDialog = false;
-  sessionId = this.generateSessionId();
+  sessionId = this.generateSessionId(); // TODO rm
   pollingInterval = 5000;
   username: string | null = null;
   private pollingSubscription?: Subscription;
 
   constructor(
     private messageService: MessageService,
-    private userService: UserService,
+    public userService: UserService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.username = this.userService.getCurrentUsername();
+    const hasToken = this.userService.isAuthenticated();
+    console.log('Messages ngOnInit - hasToken:', hasToken);
+    console.log('Messages ngOnInit - currentUser:', this.userService.currentUser());
 
-    // Redirect to login if not authenticated
-    if (!this.userService.isAuthenticated()) {
+    // redirect to login if not authenticated
+    if (!hasToken) {
       this.router.navigate(['/login']);
       return;
     }
 
-    this.loadMessages();
-    this.startPolling();
+    // load user data if not already loaded
+    if (!this.userService.currentUser()) {
+      console.log('Loading user data via getMe()...');
+      this.userService.getMe().subscribe({
+        next: (user) => {
+          console.log('getMe success in messages component:', user);
+          this.username = user.username;
+          this.loadMessages();
+          this.startPolling();
+        },
+        error: (error) => {
+          console.error('Failed to load user data:', error);
+          this.router.navigate(['/login']);
+        }
+      });
+    } else {
+      console.log('User data already loaded');
+      this.username = this.userService.getCurrentUsername();
+      console.log('Username set to:', this.username);
+      this.loadMessages();
+      this.startPolling();
+    }
   }
 
   ngOnDestroy() {
@@ -67,7 +89,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   sendMessage() {
     if (!this.to || !this.body) return;
-
+    // TODO user token
     this.messageService.sendMessage("+1" + this.to, this.body, this.sessionId).subscribe({
       next: (msg) => {
         this.messages.unshift(msg);
@@ -84,6 +106,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   loadMessages() {
+    // TODO user token
     this.messageService.getMessages(this.sessionId).subscribe((msgs) => {
       this.messages = msgs;
     });
@@ -99,12 +122,21 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.showErrorDialog = false;
   }
 
+  // TODO rm
   private generateSessionId(): string {
     return 'session_' + Math.random().toString(36).substring(2, 12);
   }
 
   logout() {
-    this.userService.logout();
-    this.router.navigate(['/login']);
+    this.userService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Logout failed:', error);
+        // Still navigate to login even if API call fails
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }
